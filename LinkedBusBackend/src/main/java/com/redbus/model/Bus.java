@@ -29,10 +29,10 @@ public class Bus {
     private double price;
     private int totalSeats;
 
-    // 🚀 Required for your existing DataLoader and route/date search
+   
     private LocalDate departureDate;
 
-    // 🟢 NEW FIELD — required for admin toggle (React page uses this)
+  
     @Column(nullable = false)
     private String status = "active"; // default "active" for new buses
 
