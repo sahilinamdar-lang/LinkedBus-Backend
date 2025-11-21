@@ -1,16 +1,24 @@
 #!/bin/bash
 set -e
 
-# Move into the Spring Boot project directory
+# Spring Boot project folder me jao
 cd redbus-backend
 
-# Use the Maven wrapper if available, otherwise use system Maven
+# -----------------------------
+# IMPORTANT: Windows se aane par
+# mvnw executable nahi hota.
+# Isliye yahan force se executable bana rahe hain.
+# -----------------------------
+chmod +x mvnw
+chmod -R +x .mvn/
+
+# Build the Spring Boot JAR
 if [ -f "./mvnw" ]; then
   ./mvnw clean package -DskipTests
 else
   mvn clean package -DskipTests
 fi
 
-# Run Spring Boot JAR on port 8080
+# Run the JAR on port 8080
 JAR_FILE=$(ls target/*.jar | head -n 1)
 java -jar "$JAR_FILE" --server.port=8080
