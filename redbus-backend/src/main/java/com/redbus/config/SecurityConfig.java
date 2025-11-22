@@ -101,27 +101,19 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Allow dev origins (pattern) and specific production origins if you want.
-        // Using patterns allows "http://localhost:3000", "http://localhost:5173", etc.
         configuration.setAllowedOriginPatterns(List.of(
             "http://localhost:*",
-            "https://your.production.frontend.com" // replace/remove as appropriate
+            "https://linkedbus-frontend.vercel.app"
         ));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        // Allow headers needed by the browser and your app
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With"));
-        // Expose headers to browser if needed (e.g., Location on 201 responses)
         configuration.setExposedHeaders(List.of("Location", "Content-Disposition"));
-        configuration.setAllowCredentials(true); // keep true if you need cookies/auth
-        // Optional: reduce preflight caching during dev. Increase for production if desired.
+        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
-        // Optional dev logging: uncomment to log CORS incoming origins (helpful while debugging)
-        // log.info("CORS patterns: {}", configuration.getAllowedOriginPatterns());
 
         return source;
     }
