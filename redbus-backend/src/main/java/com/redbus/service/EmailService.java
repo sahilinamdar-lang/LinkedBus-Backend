@@ -1,86 +1,52 @@
 package com.redbus.service;
 
-import com.sendgrid.*;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Content;
-import com.sendgrid.helpers.mail.objects.Email;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+import java.util.*;
 
 @Service
 public class EmailService {
 
-    @Value("${sendgrid.api.key}")
-    private String sendGridApiKey;
+    @Value("${brevo.api.key}")
+    private String brevoApiKey;
 
-    @Value("${sendgrid.from.email}")
+    @Value("${brevo.from.email}")
     private String senderEmail;
 
-    public void sendEmail(String to, String subject, String body) throws Exception {
+    @Value("${brevo.from.name}")
+    private String senderName;
 
-        Email from = new Email(senderEmail);
-        Email toEmail = new Email(to);
+    public void sendEmail(String to, String subject, String body) {
 
-        Content content = new Content("text/plain", body);
-        Mail mail = new Mail(from, subject, toEmail, content);
+        String url = "https://api.brevo.com/v3/smtp/email";
 
-        SendGrid sg = new SendGrid(sendGridApiKey);
-        Request request = new Request();
+        RestTemplate restTemplate = new RestTemplate();
 
-        request.setMethod(Method.POST);
-        request.setEndpoint("mail/send");
-        request.setBody(mail.build());
+        Map<String, Object> payload = new HashMap<>();
+        Map<String, String> sender = new HashMap<>();
 
-        sg.api(request);
+        sender.put("name", senderName);
+        sender.put("email", senderEmail);
+
+        payload.put("sender", sender);
+
+        List<Map<String, String>> toList = new ArrayList<>();
+        Map<String, String> toMap = new HashMap<>();
+        toMap.put("email", to);
+        toList.add(toMap);
+
+        payload.put("to", toList);
+        payload.put("subject", subject);
+        payload.put("textContent", body);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("api-key", brevoApiKey);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
+
+        restTemplate.postForEntity(url, request, String.class);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//package com.redbus.service;
-//
-//import org.springframework.mail.SimpleMailMessage;
-//import org.springframework.mail.javamail.JavaMailSender;
-//import org.springframework.stereotype.Service;
-//
-//@Service
-//public class EmailService {
-//
-//    private final JavaMailSender mailSender;
-//
-//    public EmailService(JavaMailSender mailSender) {
-//        this.mailSender = mailSender;
-//    }
-//
-//    public void sendEmail(String to, String subject, String text) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(to);
-//        message.setSubject(subject);
-//        message.setText(text);
-//        mailSender.send(message);
-//    }
-//}

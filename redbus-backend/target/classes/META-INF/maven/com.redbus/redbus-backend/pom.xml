@@ -63,10 +63,8 @@
   <version>2.15.1</version> <!-- latest stable version -->
 </dependency>
 
-<dependency>
-    <groupId>com.sendgrid</groupId>
-    <artifactId>sendgrid-java</artifactId>
-</dependency>
+
+
 
 
 
